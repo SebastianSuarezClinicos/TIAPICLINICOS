@@ -7,9 +7,6 @@ from decouple import config
 import httpx
 
 
-
-
-
 # Imports
 # db
 from db.client_graph import get_access_token
