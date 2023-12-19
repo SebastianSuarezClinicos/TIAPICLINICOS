@@ -17,7 +17,6 @@ async def send_verification_code_route(verification_data: verificationModel):
     email = verification_data.correo
     verification_code = await send_verification_code(email)
 
-    # Tiempo de expiración (5 minutos en este caso)
     expiration_time = datetime.utcnow() + timedelta(minutes=5)
 
     # Almacenar código de verificación y tiempo de expiración como un diccionario

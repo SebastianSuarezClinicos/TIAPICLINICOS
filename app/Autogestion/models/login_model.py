@@ -12,3 +12,4 @@ class loginModel(BaseModel):
 
 class verificationModel(BaseModel):
   correo: str
+

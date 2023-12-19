@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from decouple import config
 from app.Autogestion.routers import verification_router
+
 # Import Routers
 from app.Autogestion.routers import login_router
 
@@ -23,6 +24,7 @@ app.add_middleware(
 # Routers
 app.include_router(login_router.router)
 app.include_router(verification_router.router)
+
 
 # Additional configuration
 if __name__ == "__main__":
