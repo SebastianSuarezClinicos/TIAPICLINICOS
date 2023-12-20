@@ -85,7 +85,6 @@ async def login_controller(login: loginModel):
         nombres = users["value"][0]["fields"]["Nombres"]
         apellidos = users["value"][0]["fields"]["Apellidos"]
         ingreso = "Pendiente"
-        #print(list_id)
 
         if estado != "ACTIVO/A":
             return "Usuario Inactivo"
@@ -94,7 +93,6 @@ async def login_controller(login: loginModel):
         #return users
 
         result_write_list = await write_list(
-        access_token=access_token,
         correo=correo,
         nombres=nombres,
         apellidos=apellidos,
@@ -102,5 +100,5 @@ async def login_controller(login: loginModel):
         numero_identificacion=Identificacion,
         ingreso=ingreso
     )
-        return result_write_list
+        return result_write_list,access_token
         #return {"access_token": access_token, "token_type": "bearer"}

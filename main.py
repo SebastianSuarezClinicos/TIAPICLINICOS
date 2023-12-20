@@ -6,6 +6,7 @@ from app.Autogestion.routers import verification_router
 
 # Import Routers
 from app.Autogestion.routers import login_router
+from app.Autogestion.routers import update_list_router
 
 # SERVER
 app = FastAPI()
@@ -24,7 +25,7 @@ app.add_middleware(
 # Routers
 app.include_router(login_router.router)
 app.include_router(verification_router.router)
-
+app.include_router(update_list_router.router)
 
 # Additional configuration
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ Created on Mon Dec 18 2023
 
 @author:Sebastian Suarez
 '''
-''''''
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText

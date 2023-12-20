@@ -2,29 +2,28 @@
 '''
 Created on Mon Dec 19 2023
 
-@author:Sebastian Suarez
+@author: Sebastian Suarez
 '''
 
 from decouple import config
-import requests
-from datetime import datetime, timedelta
+import httpx
+from datetime import datetime
 
 from db.client_graph import get_access_token
-
+from fastapi import HTTPException
 
 # Environment variables
 site = config('SITE_AGENDAMIENTO_ECOPETROL')
 sub_site = config('SUBSITE_MEGAS_BULEVAR')
 list_id1 = config('LIST_AUTOAGENDAMIENTO_GESTION_ECOPETROL')
 
-async def write_list(access_token, correo, nombres, apellidos, tipo_identificacion, numero_identificacion, ingreso):
+async def write_list(correo, nombres, apellidos, tipo_identificacion, numero_identificacion, ingreso):
     try:
         fecha_hora_actual = datetime.utcnow().isoformat()+"Z"
         numero_identificacion = int(numero_identificacion)
         token = await get_access_token()
 
-        #print(list_id1)
-        endpoint_url =f'https://graph.microsoft.com/v1.0/sites/{site}/sites/{sub_site}/lists/{list_id1}/items'
+        endpoint_url = f'https://graph.microsoft.com/v1.0/sites/{site}/sites/{sub_site}/lists/{list_id1}/items'
         headers = {"Authorization": f"Bearer {token}"}
 
         # Datos a enviar en la solicitud
@@ -39,48 +38,26 @@ async def write_list(access_token, correo, nombres, apellidos, tipo_identificaci
                 "Ingreso": ingreso
             }
         }
-        #return item_data, site, sub_site, list_id, access_token, token
 
-        response = requests.post(endpoint_url, json=item_data, headers=headers)
+        async with httpx.AsyncClient() as client:
+            response = await client.post(endpoint_url, json=item_data, headers=headers)
+            response.raise_for_status()
 
+        # MANEJO RESPUESTA Y POSIBLES ERRORES
         if response.status_code == 201:
             item_id = response.json().get("id")
-            #print("Datos escritos en SharePoint con éxito. ID del registro:", new_item_id, item_data)
             return (ingreso, item_id)
         else:
-            print("Error al escribir en SharePoint. Código de estado:", response.status_code)
-            return ("Error al escribir en SharePoint. Código de estado:", response.status_code, response.text,)
+            raise HTTPException(status_code=response.status_code, detail=f"Error al escribir en SharePoint. Código de estado: {response.status_code}")
 
-    except Exception as e:
-        print("Error durante la operación:", e)
-        return ("Error durante la operación:", e)
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=500, detail=f"Error en la solicitud HTTP: {e}")
 
-item_id = "2"
-async def uptade_ingreso(ingreso, item_id):
-    try:
-        token = await get_access_token()
-
-        endpoint_url =f'https://graph.microsoft.com/v1.0/sites/{site}/sites/{sub_site}/lists/{list_id1}/items'
-        headers = {"Authorization": f"Bearer {token}"}
-
-        # Datos a enviar en la solicitud
-        item_data = {
-            "fields": {
-                "Ingreso": ingreso
-            }
-        }
-        #return item_data, site, sub_site, list_id, access_token, token
-
-        response = requests.patch(endpoint_url, json=item_data, headers=headers)
-
-        if response.status_code == 201:
-            new_item_id = response.json().get("id")
-            #print("Datos escritos en SharePoint con éxito. ID del registro:", new_item_id, item_data)
-            return (new_item_id)
+    except httpx.HTTPError as e:
+        if hasattr(e, "response") and e.response is not None:
+            raise HTTPException(status_code=e.response.status_code, detail=f"Error en la respuesta HTTP: {e}")
         else:
-            print("Error al escribir en SharePoint. Código de estado:", response.status_code)
-            return ("Error al escribir en SharePoint. Código de estado:", response.status_code, response.text,)
+            raise HTTPException(status_code=500, detail=f"Error en la respuesta HTTP: {e}")
 
-    except Exception as e:
-        print("Error durante la operación:", e)
-        return ("Error durante la operación:", e)
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=f"Error al analizar JSON: {e}")
