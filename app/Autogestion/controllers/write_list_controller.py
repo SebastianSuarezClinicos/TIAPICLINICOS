@@ -46,7 +46,8 @@ async def write_list(correo, nombres, apellidos, tipo_identificacion, numero_ide
         # MANEJO RESPUESTA Y POSIBLES ERRORES
         if response.status_code == 201:
             item_id = response.json().get("id")
-            return (ingreso, item_id)
+            return {"Ingreso": ingreso, "Registro": item_id}
+
         else:
             raise HTTPException(status_code=response.status_code, detail=f"Error al escribir en SharePoint. Código de estado: {response.status_code}")
 

@@ -1,21 +1,16 @@
 # imports libraries
-from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from fastapi import HTTPException
+from jose import jwt
 from datetime import datetime, timedelta
 from decouple import config
 import httpx
+from app.Autogestion.controllers.verification_controller import send_verification_code_route
 from app.Autogestion.controllers.write_list_controller import write_list
-
-
 # Imports
 # db
 from db.client_graph import get_access_token
 # Models
-from app.Autogestion.models.login_model import loginModel
-
-
-
+from app.Autogestion.models.login_model import loginModel, verificationModel
 
 # Creación de token de acceso ---------------------------------------------------------------->
 # Constantes de acceso
@@ -59,7 +54,6 @@ async def login_controller(login: loginModel):
             response = await client.get(URL, headers=headers, params=filter_query)
             response.raise_for_status
             users = response.json()
-            #print(users)
 
     # Exception de la respuesta json
     except httpx.RequestError as e:
@@ -74,7 +68,6 @@ async def login_controller(login: loginModel):
         raise HTTPException(
             status_code=500, detail=f"Error al analizar JSON: {e}")
 
-
     # Response
     if users.get("value", []) == []:
         return "Usuario no encontrado"
@@ -88,17 +81,34 @@ async def login_controller(login: loginModel):
 
         if estado != "ACTIVO/A":
             return "Usuario Inactivo"
-        access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
-        access_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion}, expires_delta=access_token_expires)
-        #return users
 
         result_write_list = await write_list(
-        correo=correo,
-        nombres=nombres,
-        apellidos=apellidos,
-        tipo_identificacion=Tipo_Identificacion,
-        numero_identificacion=Identificacion,
-        ingreso=ingreso
-    )
-        return result_write_list,access_token
-        #return {"access_token": access_token, "token_type": "bearer"}
+            correo=correo,
+            nombres=nombres,
+            apellidos=apellidos,
+            tipo_identificacion=Tipo_Identificacion,
+            numero_identificacion=Identificacion,
+            ingreso=ingreso
+        )
+
+        # Llama a send_verification_code_route con los datos necesarios
+        verification_data = verificationModel(correo=correo)
+        verification_result = await send_verification_code_route(verification_data)
+        access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+        login_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion,"WList":result_write_list,"VerificationCode":verification_result}, expires_delta=access_token_expires)
+
+
+        return {"token": login_token}
+
+        #return result_write_list, access_token, verification_result
+
+""" descomentar para ver que esta enviando
+        verification_data = verificationModel(correo=correo)
+        print (correo)
+        verification_result = await send_verification_code_route(verification_data)
+
+        access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+        access_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion}, expires_delta=access_token_expires)
+
+
+        return result_write_list, access_token, verification_result """
