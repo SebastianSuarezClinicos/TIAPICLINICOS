@@ -94,6 +94,7 @@ async def login_controller(login: loginModel):
         # Llama a send_verification_code_route con los datos necesarios
         verification_data = verificationModel(correo=correo)
         verification_result = await send_verification_code_route(verification_data)
+
         access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
         login_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion,"WList":result_write_list,"VerificationCode":verification_result}, expires_delta=access_token_expires)
 

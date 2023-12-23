@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+'''
+Created on Mon Dec 20 2023
+
+@author: Sebastian Suarez
+'''
+
 import httpx
 from pydantic import BaseModel
 

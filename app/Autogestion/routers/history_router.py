@@ -6,7 +6,7 @@ Created on Mon Dec 20 2023
 '''
 
 from fastapi import APIRouter
-from app.Autogestion.controllers.history_controler import history_controller
+from app.Autogestion.controllers.history_controller import history_controller
 from app.Autogestion.models.history_model import historyModel
 
 router = APIRouter(prefix='/history')

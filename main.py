@@ -8,6 +8,8 @@ from app.Autogestion.routers import login_router
 from app.Autogestion.routers import verification_router
 from app.Autogestion.routers import update_list_router
 from app.Autogestion.routers import history_router
+from app.Autogestion.routers import space_available_router
+from app.Autogestion.routers import cancellation_router
 
 # SERVER
 app = FastAPI()
@@ -28,7 +30,8 @@ app.include_router(login_router.router)
 app.include_router(verification_router.router)
 app.include_router(update_list_router.router)
 app.include_router(history_router.router)
-
+app.include_router(space_available_router.router)
+app.include_router(cancellation_router.router)
 # Additional configuration
 if __name__ == "__main__":
     import uvicorn
