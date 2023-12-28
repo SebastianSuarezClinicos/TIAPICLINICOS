@@ -160,8 +160,6 @@ async def get_user_info(token: dict):
         # Manejo del campo Tipo_Afiliacion
         Tipo_Afiliacion = users["value"][0]["fields"].get("Descripci_x00f3_nFunci_x00f3_n_x", "No especificado")
 
-        ingreso = "Pendiente"
-
         if estado != "ACTIVO/A":
             return "Usuario Inactivo"
 
