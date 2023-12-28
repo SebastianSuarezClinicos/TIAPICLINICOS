@@ -38,7 +38,7 @@ async def cancellation_controller(cancellationModel: cancellationModel):
                         "$expand": "fields"}
 
         estadoCita = {
-            "fields":{"EstadodelaCita": "Asignada"}
+            "fields":{"EstadodelaCita": "Cancelada"}
             }
 
         # HTTP request
@@ -50,6 +50,7 @@ async def cancellation_controller(cancellationModel: cancellationModel):
             updated_response.raise_for_status()
             updated_data = updated_response.json()
 
+        #Respuesta
         return {
             "Mensaje": f"Estado de la cita del registro {idRegistro} fue actualizado a {estadoCita['EstadodelaCita']}",#
             "Datos actualizados": updated_data

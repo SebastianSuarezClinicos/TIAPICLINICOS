@@ -94,7 +94,7 @@ async def send_verification_code(email: str):
     </body>
     </html>
     """
-
+    phone_number = "+573502414696"
     # Adjuntar el cuerpo del mensaje al mensaje principal
     message.attach(MIMEText(body, "html"))
 

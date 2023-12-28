@@ -6,6 +6,7 @@ from decouple import config
 import httpx
 from app.Autogestion.controllers.verification_controller import send_verification_code_route
 from app.Autogestion.controllers.write_list_controller import write_list
+from app.Autogestion.services.token_User import create_access_token
 # Imports
 # db
 from db.client_graph import get_access_token
@@ -17,14 +18,6 @@ from app.Autogestion.models.login_model import loginModel, verificationModel
 SECRET_KEY = config('SECRET_KEY')
 ALGORITHM =  config('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(config('ACCESS_TOKEN_EXPIRE_MINUTES'))
-
-# Creación de token
-def create_access_token(data: dict, expires_delta: int):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=expires_delta)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
 
 # Environment variables
 site = config('SITE_AGENDAMIENTO_ECOPETROL')
@@ -96,8 +89,7 @@ async def login_controller(login: loginModel):
         verification_result = await send_verification_code_route(verification_data)
 
         access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
-        login_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion,"WList":result_write_list,"VerificationCode":verification_result}, expires_delta=access_token_expires)
-
+        login_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion,"Correo": correo,"WList":result_write_list,"VerificationCode":verification_result}, expires_delta=access_token_expires)
 
         return {"token": login_token}
 

@@ -13,4 +13,5 @@ router = APIRouter(prefix='/update_ingreso')
 
 @router.post('/')
 async def update_list_router(updateModel: UpdateListModel):
+    # Ruta para actualizar el campo ingreso en la lista
     return await uptade_ingreso(updateModel)
