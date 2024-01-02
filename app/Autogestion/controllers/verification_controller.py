@@ -8,6 +8,7 @@ Created on Mon Dec 19 2023
 from fastapi import HTTPException, Header
 import httpx
 from jose import jwt
+from app.Autogestion.controllers.history_controller import history_controller
 from app.Autogestion.controllers.update_list_controller import uptade_ingreso
 from app.Autogestion.models.update_list_model import UpdateListModel
 from app.Autogestion.models.verification_model import VerificationModel
@@ -88,9 +89,11 @@ async def verify_code(
         await uptade_ingreso(update_data)
 
         user_info = await get_user_info(token)
+        # Llamar a history_controller con el token
+        history_info = await history_controller(token)
 
         del stored_verification_codes[email]
-        return {"message": "Código verificado exitosamente", "user_info": user_info}
+        return {"message": "Código verificado exitosamente", "user_info": user_info, "history_info": history_info}
     else:
         attempts = stored_code_data.get("attempts", 0)
         stored_verification_codes[email]["attempts"] = attempts + 1
@@ -155,8 +158,7 @@ async def get_user_info(token: dict):
         nombres = users["value"][0]["fields"]["Nombres"]
         apellidos = users["value"][0]["fields"]["Apellidos"]
         telefono = users["value"][0]["fields"]["Celular"]
-
-        # Manejo del campo Tipo_Afiliacion
+        Direccion = users["value"][0]["fields"].get("Direcci_x00f3_n", "No especificado")
         Tipo_Afiliacion = users["value"][0]["fields"].get("Descripci_x00f3_nFunci_x00f3_n_x", "No especificado")
 
     access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
@@ -167,6 +169,7 @@ async def get_user_info(token: dict):
         "Correo": correo,
         "Telefono": telefono,
         "Estado": estado,
+        "Direccion": Direccion,
         "Tipo_Afiliacion": Tipo_Afiliacion
     }, expires_delta=access_token_expires)
 
