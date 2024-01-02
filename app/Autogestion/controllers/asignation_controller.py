@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 '''
 Created on Mon Dec 22 2023
@@ -14,7 +13,6 @@ from app.Autogestion.models.cancellation_model import cancellationModel
 
 # db
 from db.client_graph import get_access_token
-# Models
 
 # Environment variables
 site = config('SITE_AGENDAMIENTO_ECOPETROL')
@@ -22,39 +20,28 @@ sub_site = config('SUBSITE_MEGAS_BULEVAR')
 list_id = config('LIST_RUTH_YURANYS_ARMENTA_POLO')
 
 # CONTROLLER
-async def cancellation_controller(cancellationModel: cancellationModel):
+async def check_availability_controller(id_registro: int):
     try:
         # db access token
         token = await get_access_token()
 
         # Parameters
-        idRegistro = cancellationModel.id_registro
+        idRegistro = id_registro
 
         # Configuration URL
         URL = f'https://graph.microsoft.com/v1.0/sites/{site}/sites/{sub_site}/lists/{list_id}/items/{idRegistro}'
         headers = {"Authorization": f"Bearer {token}"}
 
-        filter_query = {'$filter': f"fields/Title eq 'SALUD OCUPACIONAL' ",
-                        "$expand": "fields"}
-
-        estadoCita = {
-            "fields":{"EstadodelaCita": "Cancelada"}
-            }
-
-        # HTTP request
+        # HTTP REQUEST PARA OBTENER EL ESTADO ACTUAL
         async with httpx.AsyncClient() as client:
-            response = await client.patch(URL, headers=headers, json=estadoCita)#, params=filter_query validacion adicional 
+            response = await client.get(URL, headers=headers)
             response.raise_for_status()
+            data = response.json()
 
-            updated_response = await client.get(URL, headers=headers, params=filter_query)
-            updated_response.raise_for_status()
-            updated_data = updated_response.json()
+            # VALIDAR SI EL CAMPO 'estado' ESTA 'Disponible'
+            estado = "Disponible" if data.get("fields", {}).get("estado", None) == "Asignada" else "Disponible"
 
-        #Respuesta
-        return {
-            "Mensaje": f"Estado de la cita del registro {idRegistro} fue actualizado a {estadoCita['fields']['EstadodelaCita']}",#
-            "Datos actualizados": updated_data
-        }
+        return estado
 
     # Excepción de la respuesta JSON
     except httpx.RequestError as e:
@@ -66,3 +53,4 @@ async def cancellation_controller(cancellationModel: cancellationModel):
 
     except ValueError as e:
         raise HTTPException(status_code=500, detail=f"Error al analizar JSON: {e}")
+

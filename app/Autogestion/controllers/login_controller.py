@@ -72,7 +72,7 @@ async def login_controller(login: loginModel):
         apellidos = users["value"][0]["fields"]["Apellidos"]
         ingreso = "Pendiente"
 
-        if estado != "ACTIVO/A":
+        if estado != "Activo":
             return "Usuario Inactivo"
 
         result_write_list = await write_list(

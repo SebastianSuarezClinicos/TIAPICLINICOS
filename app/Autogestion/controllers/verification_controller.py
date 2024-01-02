@@ -5,7 +5,6 @@ Created on Mon Dec 19 2023
 @author: Sebastian Suarez
 '''
 
-from typing import Union
 from fastapi import HTTPException, Header
 import httpx
 from jose import jwt
@@ -159,9 +158,6 @@ async def get_user_info(token: dict):
 
         # Manejo del campo Tipo_Afiliacion
         Tipo_Afiliacion = users["value"][0]["fields"].get("Descripci_x00f3_nFunci_x00f3_n_x", "No especificado")
-
-        if estado != "ACTIVO/A":
-            return "Usuario Inactivo"
 
     access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
     user_info = create_access_token(data={
