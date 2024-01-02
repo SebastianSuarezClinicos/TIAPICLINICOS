@@ -28,7 +28,8 @@ def create_access_token(data: dict, expires_delta: int):
 
 def get_user_current(token):
     try:
-        token_decode = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+        token_decode = jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM],
+            options={"verify_exp": True})
         identification_number = token_decode.get("Nidentidad")
         if identification_number is None:
             raise HTTPException(

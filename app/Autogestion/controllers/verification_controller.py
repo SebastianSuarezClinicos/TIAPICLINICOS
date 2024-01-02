@@ -10,6 +10,7 @@ import httpx
 from jose import jwt
 from app.Autogestion.controllers.history_controller import history_controller
 from app.Autogestion.controllers.update_list_controller import uptade_ingreso
+from app.Autogestion.models.history_model import historyModel
 from app.Autogestion.models.update_list_model import UpdateListModel
 from app.Autogestion.models.verification_model import VerificationModel
 from app.Autogestion.models.login_model import verificationModel
@@ -89,11 +90,27 @@ async def verify_code(
         await uptade_ingreso(update_data)
 
         user_info = await get_user_info(token)
+
+        # Decodificar y validar el token
+        token_decode = get_user_current(token)
+
+        # Extraer la información del usuario del token
+        tidentificacion = token_decode.get("Tidentidad")
+        nidentificacion = token_decode.get("Nidentidad")
+
         # Llamar a history_controller con el token
-        history_info = await history_controller(token)
+        history_data = historyModel(
+        tipodeidentificacion= tidentificacion,
+        numerodeidentificacion= nidentificacion
+        )
+
+        # Llamada a history_controller
+        history_result = await history_controller(history_data, token)
+
 
         del stored_verification_codes[email]
-        return {"message": "Código verificado exitosamente", "user_info": user_info, "history_info": history_info}
+        return {"mensaje": "Código verificado exitosamente", "user_info": user_info, "history_result": history_result}
+
     else:
         attempts = stored_code_data.get("attempts", 0)
         stored_verification_codes[email]["attempts"] = attempts + 1
