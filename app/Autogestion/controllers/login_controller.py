@@ -1,7 +1,5 @@
 # imports libraries
 from fastapi import HTTPException
-from jose import jwt
-from datetime import datetime, timedelta
 from decouple import config
 import httpx
 from app.Autogestion.controllers.verification_controller import send_verification_code_route
@@ -15,8 +13,6 @@ from app.Autogestion.models.login_model import loginModel, verificationModel
 
 # Creación de token de acceso ---------------------------------------------------------------->
 # Constantes de acceso
-SECRET_KEY = config('SECRET_KEY')
-ALGORITHM =  config('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(config('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
 # Environment variables
@@ -24,31 +20,32 @@ site = config('SITE_AGENDAMIENTO_ECOPETROL')
 sub_site = config('SUBSITE_MEGAS_BULEVAR')
 list_id = config('LIST_POBLACION')
 
-# CONTROLLER
+# CONTROLADOR
 async def login_controller(login: loginModel):
     try:
-        # db access token
+        # Obtener el token de acceso para operaciones en la base de datos
         token = await get_access_token()
 
-        # Parameters
+        # Extrayendo parámetros de inicio de sesión de la solicitud
         tidentificacion = login.tipodeidentificacion
         nidentificacion = login.numerodeidentificacion
         correo = login.correo
 
-        # Configuration URL
+        # Configuración de la URL para la API de Microsoft Graph
         URL = f'https://graph.microsoft.com/v1.0/sites/{site}/sites/{sub_site}/lists/{list_id}/items'
         headers = {"Authorization": f"Bearer {token}"}
 
+        # Preparando la consulta de filtro para la solicitud a la API
         filter_query = {'$filter': f"fields/Title eq '{nidentificacion}' and fields/TipodeIdentificaci_x00f3_n eq '{tidentificacion}' and fields/E_x002d_mail eq '{correo}' ",
                         "$expand": "fields"}
 
-        # HTTP request
+        # Solicitud HTTP
         async with httpx.AsyncClient() as client:
             response = await client.get(URL, headers=headers, params=filter_query)
             response.raise_for_status
             users = response.json()
 
-    # Exception de la respuesta json
+    # Capturar excepciones durante la ejecución
     except httpx.RequestError as e:
         raise HTTPException(status_code=500,
                             detail=f"Error en la solicitud HTTP: {e}")
@@ -61,11 +58,11 @@ async def login_controller(login: loginModel):
         raise HTTPException(
             status_code=500, detail=f"Error al analizar JSON: {e}")
 
-    # Response
+    # Manejar la respuesta
     if users.get("value", []) == []:
         return "Usuario no encontrado"
     else:
-        Identificacion= users["value"][0]["fields"]["Title"]
+        Identificacion = users["value"][0]["fields"]["Title"]
         Tipo_Identificacion = users["value"][0]["fields"]["TipodeIdentificaci_x00f3_n"]
         estado = users["value"][0]["fields"]["Estado"]
         nombres = users["value"][0]["fields"]["Nombres"]
@@ -75,6 +72,7 @@ async def login_controller(login: loginModel):
         if estado != "Activo":
             return "Usuario Inactivo"
 
+        # Realizar operaciones de escritura en la lista
         result_write_list = await write_list(
             correo=correo,
             nombres=nombres,
@@ -84,14 +82,23 @@ async def login_controller(login: loginModel):
             ingreso=ingreso
         )
 
-        # Llama a send_verification_code_route con los datos necesarios
+        # Llamar a la ruta de envío de código de verificación con los datos necesarios
         verification_data = verificationModel(correo=correo)
         verification_result = await send_verification_code_route(verification_data)
 
+        # Configurar la expiración del token de acceso
         access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
-        login_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion,"Correo": correo,"WList":result_write_list,"VerificationCode":verification_result}, expires_delta=access_token_expires)
 
-        return {"token": login_token}
+        # Crear un token de acceso con los datos necesarios
+        login_info = create_access_token(data={
+            "Tidentidad": Tipo_Identificacion,
+            "Nidentidad": Identificacion,
+            "Correo": correo,
+            "WList": result_write_list,
+            "VerificationCode": verification_result
+        }, expires_delta=access_token_expires)
+
+        return {"token": login_info}
 
         #return result_write_list, access_token, verification_result
 

@@ -1,22 +1,23 @@
-""" # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 '''
 Created on Mon Dec 20 2023
-
+Last Modified on Tue Jan 2 2024
 @author: Sebastian Suarez
 '''
-
 # imports libraries
 from fastapi import HTTPException
 from decouple import config
 import httpx
 from datetime import datetime
 
-
-# Imports
 # db
 from db.client_graph import get_access_token
+
 # Models
 from app.Autogestion.models.history_model import historyModel
+
+
+from app.Autogestion.services.token_User import create_access_token, get_user_current
 
 # Environment variables
 site = config('SITE_RESERVA_CITAS')
@@ -24,18 +25,26 @@ sub_site = config('SUBSITE_MEGAS_BULEVAR')
 list_id = config('LIST_REPORTE_DE_CITAS_SAN_MARTIN')
 
 # CONTROLLER
-async def history_controller(history: historyModel):
+async def history_controller(token: str):
     try:
+        if token is None:
+            raise HTTPException(
+                status_code=401,
+                detail="Token is missing",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        token_decode = get_user_current(token)
         # db access token
-        token = await get_access_token()
+        token_db = await get_access_token()
 
         # Parameters
-        tidentificacion = history.tipodeidentificacion
-        nidentificacion = int(history.numerodeidentificacion)
+        tidentificacion = token_decode.get("Tidentidad")
+        nidentificacion = int(token_decode.get("Nidentidad"))
         sede = "SAN MARTIN"
         # Configuration URL
         URL = f'https://graph.microsoft.com/v1.0/sites/{site}/lists/{list_id}/items'
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token_db}"}
 
         filter_query = {
             '$filter': f"fields/NumeroIdentificacion eq '{nidentificacion}' and fields/TipoIdentificacion eq '{tidentificacion}'",
@@ -66,11 +75,10 @@ async def history_controller(history: historyModel):
                     }
                     extracted_data.append(user_info)
 
-                return {"users": extracted_data}
+                return {"history": extracted_data}
             else:
                 return {"error": "Formato de respuesta inesperado", "response_text": response.text}
 
-    # Excepción de la respuesta JSON
     except httpx.RequestError as e:
         raise HTTPException(status_code=500, detail=f"Error en la solicitud HTTP: {e}")
 
@@ -81,12 +89,12 @@ async def history_controller(history: historyModel):
     except ValueError as e:
         raise HTTPException(status_code=500, detail=f"Error al analizar JSON: {e}")
 
-"""
 # -*- coding: utf-8 -*-
 '''
 Created on Mon Dec 20 2023
 Last Modified on Tue Jan 2 2024
 @author: Sebastian Suarez
+'''
 '''
 # imports libraries
 from fastapi import HTTPException
@@ -101,7 +109,8 @@ from db.client_graph import get_access_token
 from app.Autogestion.models.history_model import historyModel
 
 
-from app.Autogestion.services.token_User import create_access_token, get_user_current
+from app.Autogestion.services.token_User import get_user_current
+from fastapi import Request
 
 # Environment variables
 site = config('SITE_RESERVA_CITAS')
@@ -109,15 +118,18 @@ sub_site = config('SUBSITE_MEGAS_BULEVAR')
 list_id = config('LIST_REPORTE_DE_CITAS_SAN_MARTIN')
 
 # CONTROLLER
-async def history_controller(history: historyModel, token: str):
-    try:
-        if token is None:
-            raise HTTPException(
-                status_code=401,
-                detail="Token is missing",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
+async def history_controller(history: historyModel, request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail="Cookie is missing/ history",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
 
+    try:
+        user_data = get_user_current(token)
+        print(user_data)
         # db access token
         token_db = await get_access_token()
 
@@ -171,3 +183,4 @@ async def history_controller(history: historyModel, token: str):
 
     except ValueError as e:
         raise HTTPException(status_code=500, detail=f"Error al analizar JSON: {e}")
+'''

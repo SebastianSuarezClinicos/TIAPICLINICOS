@@ -55,12 +55,19 @@ async def send_verification_code_route(verification_data: verificationModel):
     return {"Código de verificación enviado": verification_code}
 async def verify_code(
     verification_data: VerificationModel,
-    login_data: verificationModel,
-    item_id: str,
     authorization: str = Header(...),
 ):
+
+    # Extraer el token del encabezado
+    token = authorization.split(" ")[1]
+
+    # Decodificar y validar el token
+    token_decode = get_user_current(token)
+
+    item_id = token_decode["WList"]["Registro"]
+
     # Ruta para verificar el código ingresado
-    email = login_data.correo
+    email = token_decode["Correo"]
     stored_code_data = stored_verification_codes.get(email, {})
 
     if not stored_code_data:
@@ -77,8 +84,6 @@ async def verify_code(
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Token de autorización no válido")
 
-    # Extraer el token del encabezado
-    token = authorization.split(" ")[1]
 
     stored_code = stored_code_data.get("code", "")
     entered_code = verification_data.codigo
@@ -91,25 +96,22 @@ async def verify_code(
 
         user_info = await get_user_info(token)
 
-        # Decodificar y validar el token
-        token_decode = get_user_current(token)
-
-        # Extraer la información del usuario del token
-        tidentificacion = token_decode.get("Tidentidad")
-        nidentificacion = token_decode.get("Nidentidad")
-
-        # Llamar a history_controller con el token
-        history_data = historyModel(
-        tipodeidentificacion= tidentificacion,
-        numerodeidentificacion= nidentificacion
-        )
 
         # Llamada a history_controller
-        history_result = await history_controller(history_data, token)
+        history_result = await history_controller(token)
 
+
+        # Configurar la expiración del token de acceso
+        access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+
+        # Crear un token de acceso con los datos necesarios
+        Verify_token = create_access_token(data={
+            "user_info": user_info
+        }, expires_delta=access_token_expires)
 
         del stored_verification_codes[email]
-        return {"mensaje": "Código verificado exitosamente", "user_info": user_info, "history_result": history_result}
+        return {"mensaje": "Código verificado exitosamente", "token": Verify_token,
+            "history_result": history_result}
 
     else:
         attempts = stored_code_data.get("attempts", 0)
@@ -135,8 +137,6 @@ async def get_user_info(token: dict):
                 detail="Token is missing",
                 headers={"WWW-Authenticate": "Bearer"}
             )
-        else:
-            print(token)
 
         token_decode = get_user_current(token)
 
@@ -178,8 +178,7 @@ async def get_user_info(token: dict):
         Direccion = users["value"][0]["fields"].get("Direcci_x00f3_n", "No especificado")
         Tipo_Afiliacion = users["value"][0]["fields"].get("Descripci_x00f3_nFunci_x00f3_n_x", "No especificado")
 
-    access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
-    user_info = create_access_token(data={
+    user_info = {
         "Nombre Completo": nombres + " " + apellidos,
         "Tidentidad": Tipo_Identificacion,
         "Nidentidad": Identificacion,
@@ -188,6 +187,6 @@ async def get_user_info(token: dict):
         "Estado": estado,
         "Direccion": Direccion,
         "Tipo_Afiliacion": Tipo_Afiliacion
-    }, expires_delta=access_token_expires)
+    }
 
-    return {"user_info": user_info}
+    return user_info

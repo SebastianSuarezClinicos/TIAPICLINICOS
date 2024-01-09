@@ -52,8 +52,8 @@ async def cancellation_controller(cancellationModel: cancellationModel):
 
         #Respuesta
         return {
-            "Mensaje": f"Estado de la cita del registro {idRegistro} fue actualizado a {estadoCita['fields']['EstadodelaCita']}",#
-            "Datos actualizados": updated_data
+            "Mensaje": f"Estado de la cita del registro {idRegistro} fue actualizado a {estadoCita['fields']['EstadodelaCita']}"
+            #,"Datos actualizados": updated_data
         }
 
     # Excepción de la respuesta JSON

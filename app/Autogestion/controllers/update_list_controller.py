@@ -55,7 +55,7 @@ async def uptade_ingreso(updateModel):
     if response.status_code == 200:
         new_item_id = response.json().get("id")
         #print("Datos actualizados en SharePoint con éxito. ID del registro:", new_item_id)
-        return new_item_id
+        return ("Datos actualizados en SharePoint con éxito. ID del registro:", new_item_id)
     else:
         #print("Error al actualizar en SharePoint. Código de estado:", response.status_code, response.text)
         raise HTTPException(status_code=response.status_code, detail=response.text)

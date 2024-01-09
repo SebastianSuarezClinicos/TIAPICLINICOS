@@ -21,11 +21,13 @@ origins = [
     config("CLIENT_URL")
 ]
 
+# Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_origins=origins,            # Lista de orígenes permitidos
+    allow_credentials=True,           # Permitir cookies / autorización con credenciales
+    allow_methods=["*"],              # Permitir todos los métodos (GET, POST, PUT, etc.)
+    allow_headers=["*"],              # Permitir todos los encabezados
 )
 
 # Routers

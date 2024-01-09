@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            height: 37vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .container-info {
+            text-align: center;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 215, 0.5);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+        strong {
+            color: #1e90ff;
+        }
+        em {
+            font-style: italic;
+            color: #777;
+        }
+        .disclaimer {
+            font-size: 12px;
+            color: #777;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="../Documentos/AutoAgendamiento/TIAPICLINICOS/utils/img/logo_clinicos.png" alt="logo-clinicos" border="0">
+        <h1>Hola: <strong>{username}</strong> tu cita fué asignada</h1>
+        <p></p>
+        <p>Tu cita fue agendada el dia <strong>{fecha_de_cita}</strong> a las <strong>{Hora_de_cita}</strong> en modalidad <strong>{Modalidad}</strong> .</p>
+        <div class="container-info">
+            <p>Datos de la Cita:</p>
+            <p><strong>Nombre paciente:</strong> {nombre_paciente}</p>
+            <p><strong>Identificacion:</strong> {identificacion}</p>
+            <p><strong>Estado de la cita:</strong> {EstadodelaCita}</p>
+            <p><strong>Fecha de la cita:</strong> {FechadelaCita}</p>
+            <p><strong>Lugar:</strong> {LugardelaCita}</p>
+            <p><strong>Especialidad:</strong> {EspecialidaddelaCita}</p>
+            <p><strong>Hora de la cita:</strong> {HoradelaCita}</p>
+        </div>
+
+        <p><em>En caso que desee cancelar su cita debera dirigirse al portal donde se agendo <a href="http://">AutoAgendamientoEcopetrol</a> .</em></p>
+        <p><em>Este correo no puede ser respondido. Por favor, no responda a esta dirección de correo electrónico.</em></p>
+        <p class="disclaimer">Este mensaje y cualquier archivo es considerado confidencial y podría contener información privilegiada y/o reservada de Clínicos IPS, para el uso exclusivo de su destinatario. Si llegó a usted por error, le agradecemos eliminarlo e informar al remitente, absteniéndose de divulgarlo en cualquier forma. En caso contrario, podría ser objeto de sanciones acorde a la ley. Las opiniones contenidas en este mensaje y sus adjuntos no necesariamente coinciden con las posiciones institucionales de Clínicos IPS.</p>
+    </div>
+</body>
+</html>

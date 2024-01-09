@@ -4,7 +4,8 @@ Created on Mon Dec 18 2023
 @author: Sebastian Suarez
 '''
 
-from fastapi import APIRouter, HTTPException, Header, status
+from fastapi import APIRouter, HTTPException, Header, Response, status
+import re
 from app.Autogestion.controllers.verification_controller import send_verification_code_route, verify_code
 from app.Autogestion.models.login_model import verificationModel
 from app.Autogestion.models.verification_model import VerificationModel
@@ -22,11 +23,10 @@ async def send_verification_code_route_wrapper(login_data: verificationModel):
             detail=str(e)
         )
 
-@router.post('/verify-code/{item_id}', summary="Verificar código", response_description="Resultado de la verificación")
+@router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
 async def verify_code_wrapper(
+    response: Response,
     verification_data: VerificationModel,
-    login_data: verificationModel,
-    item_id: str,
     authorization: str = Header(None),
 ):
     # Ruta para verificar el código ingresado
@@ -35,4 +35,9 @@ async def verify_code_wrapper(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="No se proporcionó un token de autorización"
         )
-    return await verify_code(verification_data, login_data, item_id, authorization)
+
+    verify_code_response = await verify_code(verification_data, authorization)
+    #print(verify_code_response["history_result"])
+    # Establecer la cookie con el token JWT
+    response.set_cookie(key="access_token", value=verify_code_response["token"], httponly=True, samesite='Lax')
+    return ("Verificacion exitosa", verify_code_response["history_result"])
