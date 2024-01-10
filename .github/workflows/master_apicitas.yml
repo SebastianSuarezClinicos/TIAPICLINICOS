@@ -17,6 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: Instalar Dependencias
+        run: npm install
+
+      #- name: Ejecutar Pruebas
+        #run: npm test
+
       - name: Set up Python version
         uses: actions/setup-python@v1
         with:
