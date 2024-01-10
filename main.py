@@ -38,7 +38,7 @@ app.include_router(history_router.router)
 app.include_router(space_available_router.router)
 app.include_router(cancellation_router.router)
 app.include_router(asignation_router.router)
-# Additional configuration
+""" # Additional configuration
 if __name__ == "__main__":
     import uvicorn
 
@@ -48,3 +48,4 @@ if __name__ == "__main__":
 
     # Run the application using uvicorn
     uvicorn.run(app, host=host, port=port)
+"""

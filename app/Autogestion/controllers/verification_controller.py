@@ -52,7 +52,7 @@ async def send_verification_code_route(verification_data: verificationModel):
 
     stored_verification_codes[email] = {"code": verification_code, "expiration_time": expiration_time, "attempts": 0}
 
-    return {"Código de verificación enviado": verification_code}
+    return {"Código de verificación enviado"}
 async def verify_code(
     verification_data: VerificationModel,
     authorization: str = Header(...),
