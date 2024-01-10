@@ -17,8 +17,8 @@ from app.Autogestion.routers import asignation_router
 app = FastAPI()
 
 # CORS
-origins = [
-    config("CLIENT_URL")
+origins = ["*"
+    #config("CLIENT_URL")
 ]
 
 # Configuración de CORS
