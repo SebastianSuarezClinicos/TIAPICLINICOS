@@ -1,2 +1,2 @@
 #!/bin/sh
-uvicorn main:app --port 5000
+#uvicorn main:app --port 5000
