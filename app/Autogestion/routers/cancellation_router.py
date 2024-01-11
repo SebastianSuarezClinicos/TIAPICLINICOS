@@ -12,7 +12,7 @@ from app.Autogestion.models.cancellation_model import cancellationModel
 router = APIRouter(prefix='/appointment-cancellation')
 
 # Definición de la ruta POST en /appointment-cancellation
-@router.post('/', summary="Cancelar Cita", response_description="Resultado de la cancelación de la cita")
+@router.post('/AutoagendamientoAppointment-cancellation', summary="Cancelar Cita", response_description="Resultado de la cancelación de la cita")
 async def cancellation_router(cancellation_data: cancellationModel):
     try:
     #Llamar ruta para cancelar la cita asignada previamente

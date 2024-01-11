@@ -18,7 +18,7 @@ def validar_correo(correo: str) -> bool:
     patron_gmail = re.compile(r'^[a-zA-Z0-9_.+-]+@clinicos\.com\.co$')
     return patron_gmail.match(correo) is not None
 
-@router.post('/', summary="Iniciar Sesión", response_description="Resultado del inicio de sesión")
+@router.post('/AutoagendamientoLogin', summary="Iniciar Sesión", response_description="Resultado del inicio de sesión")
 async def login_router(login: loginModel):
     if not validar_correo(login.correo):
         raise HTTPException(

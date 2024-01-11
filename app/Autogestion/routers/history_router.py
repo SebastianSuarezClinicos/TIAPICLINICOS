@@ -18,7 +18,7 @@ router = APIRouter(prefix='/history')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Definición de la ruta POST en /history
-@router.post('/')
+@router.post('/AutoagendamientHistory', summary="Obtener Historial de Citas", response_description="Historial de citas del paciente")
 async def history_router(token: str = Depends(oauth2_scheme)):
     # Verificar si el token está presente
     if not token:

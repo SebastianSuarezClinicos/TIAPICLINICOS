@@ -9,7 +9,7 @@ from app.Autogestion.controllers.space_available_controller import space_availab
 
 router = APIRouter(prefix='/space_available')
 
-@router.post('/', summary="Obtener Disponibilidad de Citas", response_description="Disponibilidad de citas")
+@router.post('/AutoagendamientoSpace_available', summary="Obtener Disponibilidad de Citas", response_description="Disponibilidad de citas")
 async def space_available_router():
     # Ruta para obtener la disponibilidad de citas
     try:
