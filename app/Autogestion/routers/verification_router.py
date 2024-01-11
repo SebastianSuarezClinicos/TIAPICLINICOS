@@ -37,7 +37,8 @@ async def verify_code_wrapper(
         )
 
     verify_code_response = await verify_code(verification_data, authorization)
-    #print(verify_code_response["history_result"])
     # Establecer la cookie con el token JWT
-    response.set_cookie(key="access_token", value=verify_code_response["token"], httponly=True, samesite='Lax')
+    response.set_cookie(key="access_token", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, path="/")
     return ("Verificacion exitosa", verify_code_response["history_result"])
+
+

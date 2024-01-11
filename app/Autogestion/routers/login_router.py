@@ -5,6 +5,8 @@ Created on Mon Dec 22 2023
 '''
 
 from fastapi import APIRouter, HTTPException, status
+from fastapi import Response
+
 import re
 
 from app.Autogestion.models.login_model import loginModel
@@ -25,3 +27,9 @@ async def login_router(login: loginModel):
         )
 
     return await login_controller(login)
+
+
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie(key="access_token", path="/")
+    return {"message": "Logout exitoso"}
