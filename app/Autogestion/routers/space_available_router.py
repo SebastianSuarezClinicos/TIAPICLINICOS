@@ -7,9 +7,9 @@ Created on Mon Dec 22 2023
 from fastapi import APIRouter, HTTPException, status
 from app.Autogestion.controllers.space_available_controller import space_available_controller
 
-router = APIRouter(prefix='/space_available')
+router = APIRouter(prefix='/Autoagendamiento')
 
-@router.post('/AutoagendamientoSpace_available', summary="Obtener Disponibilidad de Citas", response_description="Disponibilidad de citas")
+@router.post('/space_available', summary="Obtener Disponibilidad de Citas", response_description="Disponibilidad de citas")
 async def space_available_router():
     # Ruta para obtener la disponibilidad de citas
     try:

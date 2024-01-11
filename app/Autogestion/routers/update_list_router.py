@@ -9,9 +9,9 @@ from fastapi import APIRouter, HTTPException, status
 from app.Autogestion.controllers.update_list_controller import uptade_ingreso
 from app.Autogestion.models.update_list_model import UpdateListModel
 
-router = APIRouter(prefix='/update_ingreso')
+router = APIRouter(prefix='/Autoagendamiento')
 
-@router.post('/AutoagendamientoUpdate_ingreso', summary="Actualizar Ingreso", response_description="Resultado de la actualización")
+@router.post('/update_ingreso', summary="Actualizar Ingreso", response_description="Resultado de la actualización")
 async def update_list_router(updateModel: UpdateListModel):
     # Ruta para actualizar el campo ingreso en la lista
     try:

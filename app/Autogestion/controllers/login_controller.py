@@ -98,7 +98,7 @@ async def login_controller(login: loginModel):
             "VerificationCode": verification_result
         }, expires_delta=access_token_expires)
 
-        return {"token": login_info}
+        return login_info
 
         #return result_write_list, access_token, verification_result
 

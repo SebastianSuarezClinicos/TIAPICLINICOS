@@ -9,9 +9,9 @@ from app.Autogestion.models.asignation_model import AsignationModel
 from app.Autogestion.controllers.asignation_controller import asignation_controller
 
 # Crear un nuevo router para las rutas relacionadas con la asignación
-router = APIRouter(prefix='/asignation-schedule')
+router = APIRouter(prefix='/Autoagendamiento')
 
-@router.post("/AutoagendamientoAsignation-schedule",
+@router.post("/asignation-schedule",
             summary="Asignar una cita",
             response_description="Resultado de la asignación",
             response_model=dict)

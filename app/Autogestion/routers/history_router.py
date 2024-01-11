@@ -11,14 +11,14 @@ from app.Autogestion.models.history_model import historyModel
 
 
 # Creación del router para la ruta /history
-router = APIRouter(prefix='/history')
+router = APIRouter(prefix='/Autoagendamiento')
 
 
 # Configuración del esquema de autenticación OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Definición de la ruta POST en /history
-@router.post('/AutoagendamientHistory', summary="Obtener Historial de Citas", response_description="Historial de citas del paciente")
+@router.post('/History', summary="Obtener Historial de Citas", response_description="Historial de citas del paciente")
 async def history_router(token: str = Depends(oauth2_scheme)):
     # Verificar si el token está presente
     if not token:
