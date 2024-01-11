@@ -34,18 +34,3 @@ async def asignar_cita(asignation_data: AsignationModel, request: Request):
         # Manejar cualquier otra excepción como un error interno del servidor
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Internal Server Error: {e}")
-
-"""
-#Descomentar para probar disponibilidad
-from app.Autogestion.controllers.asignation_controller import check_availability_controller_5
-
-# Creación del router para la ruta /check_availability
-router = APIRouter(prefix='/check_availability')
-
-# Definición de la ruta GET en /check_availability
-@router.get('/{id_registro}')
-async def check_availability_router(id_registro: int):
-    #Llamar ruta para validarsi sigue Disponible la agenda
-    return await check_availability_controller_5(id_registro)
-
-"""

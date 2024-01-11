@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+'''
+Created on Mon Dec 22 2023
+@author: Sebastian Suarez
+'''
 # imports libraries
 from fastapi import HTTPException
 from decouple import config
@@ -98,17 +103,4 @@ async def login_controller(login: loginModel):
             #"VerificationCode": verification_result
         }, expires_delta=access_token_expires)
 
-        return {"token:":login_info} 
-
-        #return result_write_list, access_token, verification_result
-
-""" descomentar para ver que esta enviando
-        verification_data = verificationModel(correo=correo)
-        print (correo)
-        verification_result = await send_verification_code_route(verification_data)
-
-        access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
-        access_token = create_access_token(data={"Tidentidad": Tipo_Identificacion, "Nidentidad": Identificacion}, expires_delta=access_token_expires)
-
-
-        return result_write_list, access_token, verification_result """
+        return {"token:":login_info}

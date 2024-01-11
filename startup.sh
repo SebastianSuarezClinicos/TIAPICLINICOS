@@ -1,3 +1,4 @@
+#archivo autoejecutado por el app service en azure
 python3 -m venv entorno
 source entorno/bin/activate
 pip install -r requirements.txt
