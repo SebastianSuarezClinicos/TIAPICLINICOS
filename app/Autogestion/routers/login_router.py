@@ -5,7 +5,6 @@ Created on [Fecha de Creación]
 '''
 
 from fastapi import APIRouter, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
 import re
 
 from app.Autogestion.models.login_model import loginModel
@@ -24,7 +23,8 @@ async def login_router(login: loginModel):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Correo no válido"
         )
-    return await login_controller(login)
+
+    return await login_controller(login)#{"error"} 
 
 """
 # -*- coding: utf-8 -*-
