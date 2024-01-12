@@ -17,7 +17,7 @@ router = APIRouter(prefix='/Autoagendamiento')
             response_model=dict)
 async def asignar_cita(asignation_data: AsignationModel, request: Request):
     try:
-        token = request.cookies.get('access_token')
+        token = request.cookies.get('accessToken')
         #print(token)
         if not token:
             raise HTTPException(

@@ -31,5 +31,5 @@ async def login_router(login: loginModel):
 
 @router.post("/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="accessToken")
     return {"message": "Logout exitoso"}

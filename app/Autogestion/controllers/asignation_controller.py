@@ -22,7 +22,7 @@ list_id = config('LIST_RUTH_YURANYS_ARMENTA_POLO')
 # Controlador para asignar una cita
 async def asignation_controller(asignation_data: AsignationModel,
     request: Request):
-    token = request.cookies.get("access_token")
+    token = request.cookies.get("accessToken")
     if not token:
         raise HTTPException(
             status_code=401,
