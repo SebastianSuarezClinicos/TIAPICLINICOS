@@ -10,7 +10,7 @@ from app.Autogestion.controllers.verification_controller import send_verificatio
 from app.Autogestion.models.login_model import verificationModel
 from app.Autogestion.models.verification_model import VerificationModel
 
-router = APIRouter(prefix='/verification')
+router = APIRouter(prefix='/Autoagendamiento/verification')
 
 @router.post('/send-code', summary="Enviar código de verificación", response_description="Resultado del envío")
 async def send_verification_code_route_wrapper(login_data: verificationModel):
