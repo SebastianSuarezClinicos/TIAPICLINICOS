@@ -16,9 +16,9 @@ async def sHello(
     ):
     hello = "Hello World"
 
-    verify_code_response = await verify_code()
+    #verify_code_response = await verify_code()
     # Establecer la cookie con el token JWT
-    response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
+    #response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
 
     response.set_cookie(key="hello", value=hello, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
-    return ("Verificacion exitosa", verify_code_response["history_result"]), hello
+    return ("Verificacion exitosa", hello#verify_code_response["history_result"]), 
