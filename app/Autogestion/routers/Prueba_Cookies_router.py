@@ -21,4 +21,4 @@ async def sHello(
     #response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
 
     response.set_cookie(key="hello", value=hello, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
-    return ("Verificacion exitosa", hello#verify_code_response["history_result"]), 
+    return ("Verificacion exitosa", hello)#verify_code_response["history_result"]),
