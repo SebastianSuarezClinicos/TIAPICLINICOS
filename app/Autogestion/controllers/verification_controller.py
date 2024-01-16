@@ -107,7 +107,7 @@ async def verify_code(
         # Crear un token de acceso con los datos necesarios
         Verify_token = create_access_token(data={
             "user_info": user_info
-        }, expires_delta=access_token_expires)
+        })
 
         del stored_verification_codes[email]
         return {"mensaje": "Código verificado exitosamente", "token": Verify_token,
