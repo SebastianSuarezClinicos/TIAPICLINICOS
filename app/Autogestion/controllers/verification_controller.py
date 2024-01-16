@@ -5,7 +5,7 @@ Created on Mon Dec 19 2023
 @author: Sebastian Suarez
 '''
 
-from fastapi import HTTPException, Header
+from fastapi import HTTPException, Header, Response
 import httpx
 from jose import jwt
 from app.Autogestion.controllers.history_controller import history_controller
@@ -130,7 +130,7 @@ async def send_verification_code_route(verification_data: verificationModel):
  """
 
 
-async def verify_code(verification_data: VerificationModel):
+async def verify_code(verification_data: VerificationModel, response: Response):
 
     token = verification_data.token
 
@@ -165,6 +165,8 @@ async def verify_code(verification_data: VerificationModel):
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         Verify_token = create_access_token(data={"user_info": user_info})
 
+    # Establecer la cookie con el token JWT
+        response.set_cookie(key="accessToken", value=Verify_token, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
         del stored_verification_codes[email]
         return {"mensaje": "Código verificado exitosamente", "token": Verify_token, "history_result": history_result}
 
