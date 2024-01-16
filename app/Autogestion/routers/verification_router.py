@@ -45,7 +45,6 @@ async def verify_code_wrapper(
 """
 @router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
 async def verify_code_wrapper(
-    response: Response,
     verification_data: VerificationModel
 ):
     # Llamar a la función de verificación con los datos de verificación
