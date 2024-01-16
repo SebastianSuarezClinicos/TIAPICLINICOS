@@ -43,7 +43,7 @@ async def verify_code_wrapper(
     #return ("Verificacion exitosa", verify_code_response["history_result"])
     return {
         "message": "Verificacion exitosa",
-        "headers": {"set-cookie": "accessToken={cookieToken}"},
+        f"headers": {"set-cookie": "accessToken={cookieToken}"},
         "Historial": verify_code_response["history_result"]
     }
 
