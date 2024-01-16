@@ -8,4 +8,3 @@ from pydantic import BaseModel
 
 class VerificationModel(BaseModel):
     codigo: str
-    token: str

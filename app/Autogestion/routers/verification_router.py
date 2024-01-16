@@ -23,7 +23,7 @@ async def send_verification_code_route_wrapper(login_data: verificationModel):
             detail=str(e)
         )
 
-""" @router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
+@router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
 async def verify_code_wrapper(
     response: Response,
     verification_data: VerificationModel,
@@ -42,19 +42,3 @@ async def verify_code_wrapper(
     return ("Verificacion exitosa", verify_code_response["history_result"])
 
 
-"""
-router = APIRouter()
-
-@router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
-async def verify_code_wrapper(
-    response: Response,
-    verification_data: VerificationModel
-):
-    # Llamar a la función de verificación con los datos de verificación
-    verify_code_response = await verify_code(verification_data)
-
-    # Establecer la cookie con el token JWT
-    response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
-
-    # Retornar la respuesta
-    return {"message": "Verificacion exitosa", "history_result": verify_code_response["history_result"]}
