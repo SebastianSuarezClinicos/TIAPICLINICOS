@@ -54,7 +54,6 @@ async def verify_code_wrapper(
     # Retornar la respuesta
     return {
         "message": "Verificacion exitosa",
-        "history_result": verify_code_response["history_result"],
-        "set_cookie": response.headers.get("Set-Cookie")
+        "history_result": verify_code_response["history_result"]
     }
 
