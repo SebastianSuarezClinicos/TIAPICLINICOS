@@ -166,7 +166,7 @@ async def verify_code(verification_data: VerificationModel, response: Response):
         Verify_token = create_access_token(data={"user_info": user_info})
 
     # Establecer la cookie con el token JWT
-        response.set_cookie(key="accessToken", value=Verify_token, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
+        response.set_cookie(key="accessToken", value=Verify_token, samesite='None', max_age=1800, domain=None)
         del stored_verification_codes[email]
         return {"mensaje": "Código verificado exitosamente", "token": Verify_token, "history_result": history_result}
 
