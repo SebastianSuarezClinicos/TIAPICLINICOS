@@ -163,7 +163,7 @@ async def verify_code(verification_data: VerificationModel):
         history_result = await history_controller(token)
 
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        Verify_token = create_access_token(data={"user_info": user_info}, expires_delta=access_token_expires)
+        Verify_token = create_access_token(data={"user_info": user_info})
 
         del stored_verification_codes[email]
         return {"mensaje": "Código verificado exitosamente", "token": Verify_token, "history_result": history_result}
