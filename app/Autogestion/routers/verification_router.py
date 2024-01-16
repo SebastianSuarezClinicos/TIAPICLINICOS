@@ -45,15 +45,17 @@ async def verify_code_wrapper(
 """
 @router.post('/verify-code', summary="Verificar código", response_description="Resultado de la verificación")
 async def verify_code_wrapper(
+    response: Response,
     verification_data: VerificationModel
 ):
     # Llamar a la función de verificación con los datos de verificación
-    verify_code_response = await verify_code(verification_data)
+    verify_code_response = await verify_code(verification_data, response)
 
 
     # Retornar la respuesta
     return {
         "message": "Verificacion exitosa",
-        "history_result": verify_code_response["history_result"]
+        "history_result": verify_code_response["history_result"],
+        "set_cookie": response.headers.get("Set-Cookie")
     }
 
