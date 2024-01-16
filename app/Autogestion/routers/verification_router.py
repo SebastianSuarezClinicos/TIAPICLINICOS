@@ -55,4 +55,9 @@ async def verify_code_wrapper(
     response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
 
     # Retornar la respuesta
-    return {"message": "Verificacion exitosa", "history_result": verify_code_response["history_result"]}
+    return {
+        "message": "Verificacion exitosa",
+        "history_result": verify_code_response["history_result"],
+        "set_cookie": response.headers.get("Set-Cookie")
+    }
+
