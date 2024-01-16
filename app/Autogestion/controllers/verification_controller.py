@@ -53,7 +53,7 @@ async def send_verification_code_route(verification_data: verificationModel):
     stored_verification_codes[email] = {"code": verification_code, "expiration_time": expiration_time, "attempts": 0}
 
     return {"Código de verificación enviado"}
-async def verify_code(
+""" async def verify_code(
     verification_data: VerificationModel,
     authorization: str = Header(...),
 ):
@@ -126,6 +126,60 @@ async def verify_code(
         else:
             # Manejar caso de código incorrecto
             raise HTTPException(status_code=400, detail="Código incorrecto, por favor inténtelo de nuevo.")
+
+ """
+
+
+async def verify_code(verification_data: VerificationModel):
+
+    token = verification_data.token
+
+    # Decodificar y validar el token
+    token_decode = get_user_current(token)
+
+    item_id = token_decode["WList"]["Registro"]
+
+    email = token_decode["Correo"]
+    stored_code_data = stored_verification_codes.get(email, {})
+
+    if not stored_code_data:
+        await handle_unsuccessful_verification(item_id)
+
+    expiration_time = stored_code_data.get("expiration_time", datetime.utcnow())
+
+    if datetime.utcnow() > expiration_time:
+        await handle_unsuccessful_verification(item_id)
+
+    stored_code = stored_code_data.get("code", "")
+    entered_code = verification_data.codigo
+
+    if entered_code == stored_code:
+        ingreso = "Exitoso"
+        update_data = UpdateListModel(item_id=item_id, ingreso=ingreso)
+        await uptade_ingreso(update_data)
+
+        user_info = await get_user_info(token)
+
+        history_result = await history_controller(token)
+
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        Verify_token = create_access_token(data={"user_info": user_info}, expires_delta=access_token_expires)
+
+        del stored_verification_codes[email]
+        return {"mensaje": "Código verificado exitosamente", "token": Verify_token, "history_result": history_result}
+
+    else:
+        attempts = stored_code_data.get("attempts", 0)
+        stored_verification_codes[email]["attempts"] = attempts + 1
+
+        max_attempts = 3
+        if attempts >= max_attempts:
+            await handle_unsuccessful_verification(item_id)
+            del stored_verification_codes[email]
+            raise HTTPException(status_code=400, detail="Se ha superado el límite de intentos, por favor solicite un nuevo código.")
+        else:
+            raise HTTPException(status_code=400, detail="Código incorrecto, por favor inténtelo de nuevo.")
+
 
 
 async def get_user_info(token: dict):
