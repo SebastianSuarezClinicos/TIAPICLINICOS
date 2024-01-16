@@ -10,19 +10,13 @@ router = APIRouter(prefix='/Autogestion')
 
 @router.post('/TestCookie', summary="Enviar código de verificación", response_description="Resultado del envío")
 async def sHello(
-    #verification_data: VerificationModel,verification_data
-    #response: Response,
-    #authorization: str = Header(None), authorization, authorization
-    ):
+    verification_data: VerificationModel,
+    response: Response):
     hello = "Hello World"
 
-    #verify_code_response = await verify_code()
+    verify_code_response = await verify_code(verification_data)
     # Establecer la cookie con el token JWT
-    #response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
+    response.set_cookie(key="accessToken", value=verify_code_response["token"], httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
 
-    #response.set_cookie(key="hello", value=hello, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
-    return {
-        "message": "Verificacion exitosa",
-        "data": hello,
-        "headers": {"set-cookie": "accessToken=1234"}
-    }#verify_code_response["history_result"]),
+    response.set_cookie(key="hello", value=hello, httponly=True, secure=True, samesite='None', max_age=1800, domain=None)
+    return ("Verificacion exitosa", verify_code_response["history_result"]), hello
